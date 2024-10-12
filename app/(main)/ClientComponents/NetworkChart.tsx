@@ -31,7 +31,7 @@ import useSWR from "swr";
 
 interface ResultItem {
   created_at: number;
-  [key: string]: number;
+  [key: string]: number | null;
 }
 
 export function NetworkChartClient({ server_id }: { server_id: number }) {
@@ -85,14 +85,26 @@ export function NetworkChartClient({ server_id }: { server_id: number }) {
     const result: { [time: number]: ResultItem } = {};
 
     // 遍历每个监控项
+    // 获取所有时间点
+    const allTimes = new Set<number>();
+    rawData.forEach((item) => {
+      item.created_at.forEach((time) => allTimes.add(time));
+    });
+    const allTimeArray = Array.from(allTimes).sort((a, b) => a - b);
+
+    // 遍历所有时间点，补全每个监控服务的数据
     rawData.forEach((item) => {
       const { monitor_name, created_at, avg_delay } = item;
 
-      created_at.forEach((time, index) => {
+      // 初始化监控项在每个时间点的值
+      allTimeArray.forEach((time) => {
         if (!result[time]) {
           result[time] = { created_at: time };
         }
-        result[time][monitor_name] = parseFloat(avg_delay[index].toFixed(2));
+      // 如果该时间点有数据，使用实际数据，否则补 null
+        const timeIndex = created_at.indexOf(time);
+        result[time][monitor_name] =
+          timeIndex !== -1 ? avg_delay[timeIndex] : null;
       });
     });
 
@@ -263,6 +275,7 @@ export function NetworkChart({
                   dot={false}
                   dataKey={key}
                   stroke={getColorByIndex(key)}
+                  connectNulls={true}
                 />
               ))}
           </LineChart>
