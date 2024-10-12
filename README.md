@@ -22,7 +22,3 @@
 | NEXT_PUBLIC_ShowNetTransfer    | 是否显示流量信息                 | **默认**：false                  |
 | NEXT_PUBLIC_ForceUseSvgFlag    | 是否强制使用SVG旗帜          | **默认**：false                  |
 
-![screen-shot-one](/.github/shot-1.png)
-![screen-shot-two](/.github/shot-2.png)
-![screen-shot-three](/.github/shot-3.png)
-![screen-shot-four](/.github/shot-4.png)
