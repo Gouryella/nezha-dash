@@ -1,12 +1,10 @@
 import { BackIcon } from "@/components/Icon";
 import { Loader } from "@/components/loading/Loader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 
 export default function NetworkChartLoading() {
   const router = useRouter();
-  const locale = useLocale();
 
   return (
     <Card>
@@ -14,7 +12,7 @@ export default function NetworkChartLoading() {
         <div className="flex flex-1 flex-col justify-center gap-1 px-6 py-5">
           <CardTitle
             onClick={() => {
-              router.push(`/${locale}/`);
+              router.push(`/`);
             }}
             className="flex items-center cursor-pointer gap-0.5 text-xl"
           >

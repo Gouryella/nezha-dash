@@ -1,6 +1,6 @@
 {
-  "name": "201 Lab Server Dashboard",
-  "short_name": "Server Dashboard PWA App",
+  "name": "201 Lab Server Status",
+  "short_name": "201 Lab PWA App",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",

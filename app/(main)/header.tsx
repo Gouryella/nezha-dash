@@ -1,11 +1,10 @@
 "use client";
 
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { ModeToggle } from "@/components/ThemeSwitcher";
+import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { DateTime } from "luxon";
-import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import { ModeToggle } from "@/components/ThemeSwitcher";
 
 function Header() {
   return (
@@ -60,9 +59,13 @@ function Overview() {
   const [mouted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
+    setTimeString(DateTime.now().setLocale("en-US").toLocaleString(timeOption));
+    setUtcTimeString(DateTime.now().setZone('utc').setLocale("en-US").toLocaleString(timeOption));
   }, []);
+
   const timeOption = DateTime.TIME_SIMPLE;
   timeOption.hour12 = true;
+
   const [timeString, setTimeString] = useState(
     DateTime.now().setLocale("en-US").toLocaleString(timeOption),
   );
@@ -92,5 +95,6 @@ function Overview() {
     </section>
   );
 }
+
 
 export default Header;

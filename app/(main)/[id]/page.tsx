@@ -1,4 +1,4 @@
-import { NetworkChartClient } from "@/app/[locale]/(main)/ClientComponents/NetworkChart";
+import { NetworkChartClient } from "@/app/(main)/ClientComponents/NetworkChart";
 
 export default function Page({ params }: { params: { id: string } }) {
   return (

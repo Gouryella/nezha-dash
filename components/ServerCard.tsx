@@ -1,4 +1,4 @@
-import { NezhaAPISafe } from "@/app/[locale]/types/nezha-api";
+import { NezhaAPISafe } from "@/app/types/nezha-api";
 import ServerCardPopover from "@/components/ServerCardPopover";
 import ServerFlag from "@/components/ServerFlag";
 import ServerUsageBar from "@/components/ServerUsageBar";
@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/popover";
 import getEnv from "@/lib/env-entry";
 import { cn, formatBytes, formatNezhaInfo } from "@/lib/utils";
-import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
 export default function ServerCard({
@@ -19,7 +18,6 @@ export default function ServerCard({
 }: {
   serverInfo: NezhaAPISafe;
 }) {
-  const t = useTranslations("ServerCard");
   const router = useRouter();
   const { id, name, country_code, online, cpu, up, down, mem, stg, ...props } =
     formatNezhaInfo(serverInfo);
@@ -27,8 +25,6 @@ export default function ServerCard({
   const showFlag = getEnv("NEXT_PUBLIC_ShowFlag") === "true";
 
   const showNetTransfer = getEnv("NEXT_PUBLIC_ShowNetTransfer") === "true";
-
-  const locale = useLocale();
 
   return online ? (
     <Card
@@ -57,40 +53,40 @@ export default function ServerCard({
       </Popover>
       <div
         onClick={() => {
-          router.push(`/${locale}/${id}`);
+          router.push(`/${id}`);
         }}
         className="flex flex-col gap-2 cursor-pointer"
       >
         <section className={"grid  grid-cols-5 items-center gap-3"}>
           <div className={"flex w-14 flex-col"}>
-            <p className="text-xs text-muted-foreground">{t("CPU")}</p>
+            <p className="text-xs text-muted-foreground">CPU</p>
             <div className="flex items-center text-xs font-semibold">
               {cpu.toFixed(2)}%
             </div>
             <ServerUsageBar value={cpu} />
           </div>
           <div className={"flex w-14 flex-col"}>
-            <p className="text-xs text-muted-foreground">{t("Mem")}</p>
+            <p className="text-xs text-muted-foreground">Mem</p>
             <div className="flex items-center text-xs font-semibold">
               {mem.toFixed(2)}%
             </div>
             <ServerUsageBar value={mem} />
           </div>
           <div className={"flex w-14 flex-col"}>
-            <p className="text-xs text-muted-foreground">{t("STG")}</p>
+            <p className="text-xs text-muted-foreground">STG</p>
             <div className="flex items-center text-xs font-semibold">
               {stg.toFixed(2)}%
             </div>
             <ServerUsageBar value={stg} />
           </div>
           <div className={"flex w-14 flex-col"}>
-            <p className="text-xs text-muted-foreground">{t("Upload")}</p>
+            <p className="text-xs text-muted-foreground">Upload</p>
             <div className="flex items-center text-xs font-semibold">
               {up.toFixed(2)}M/s
             </div>
           </div>
           <div className={"flex w-14 flex-col"}>
-            <p className="text-xs text-muted-foreground">{t("Download")}</p>
+            <p className="text-xs text-muted-foreground">Download</p>
             <div className="flex items-center text-xs font-semibold">
               {down.toFixed(2)}M/s
             </div>
@@ -99,7 +95,7 @@ export default function ServerCard({
         {showNetTransfer && (
           <section
             onClick={() => {
-              router.push(`/${locale}/${id}`);
+              router.push(`/${id}`);
             }}
             className={"flex items-center justify-between gap-1"}
           >
@@ -107,13 +103,13 @@ export default function ServerCard({
               variant="secondary"
               className="items-center flex-1 justify-center rounded-[8px] text-nowrap text-[11px] border-muted-50 shadow-md shadow-neutral-200/30 dark:shadow-none"
             >
-              {t("Upload")}:{formatBytes(serverInfo.status.NetOutTransfer)}
+              Upload:{formatBytes(serverInfo.status.NetOutTransfer)}
             </Badge>
             <Badge
               variant="outline"
               className="items-center flex-1 justify-center rounded-[8px] text-nowrap text-[11px] shadow-md shadow-neutral-200/30 dark:shadow-none"
             >
-              {t("Download")}:{formatBytes(serverInfo.status.NetInTransfer)}
+              Download:{formatBytes(serverInfo.status.NetInTransfer)}
             </Badge>
           </section>
         )}
@@ -141,7 +137,7 @@ export default function ServerCard({
           </section>
         </PopoverTrigger>
         <PopoverContent className="w-fit p-2" side="top">
-          <p className="text-sm text-muted-foreground">{t("Offline")}</p>
+          <p className="text-sm text-muted-foreground">Offline</p>
         </PopoverContent>
       </Popover>
     </Card>

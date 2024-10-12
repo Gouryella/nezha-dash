@@ -1,10 +1,10 @@
 "use client";
 
-import NetworkChartLoading from "@/app/[locale]/(main)/ClientComponents/NetworkChartLoading";
+import NetworkChartLoading from "@/app/(main)/ClientComponents/NetworkChartLoading";
 import {
   NezhaAPIMonitor,
   ServerMonitorChart,
-} from "@/app/[locale]/types/nezha-api";
+} from "@/app/types/nezha-api";
 import { BackIcon } from "@/components/Icon";
 import {
   Card,
@@ -24,8 +24,6 @@ import {
 import getEnv from "@/lib/env-entry";
 import { formatTime, nezhaFetcher } from "@/lib/utils";
 import { formatRelativeTime } from "@/lib/utils";
-import { useLocale } from "next-intl";
-import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import * as React from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
@@ -37,7 +35,6 @@ interface ResultItem {
 }
 
 export function NetworkChartClient({ server_id }: { server_id: number }) {
-  const t = useTranslations("NetworkChartClient");
   const { data, error } = useSWR<NezhaAPIMonitor[]>(
     `/api/monitor?server_id=${server_id}`,
     nezhaFetcher,
@@ -53,7 +50,7 @@ export function NetworkChartClient({ server_id }: { server_id: number }) {
         <div className="flex flex-col items-center justify-center">
           <p className="text-sm font-medium opacity-40">{error.message}</p>
           <p className="text-sm font-medium opacity-40">
-            {t("chart_fetch_error_message")}
+            Failed to fetch network data, please check if the server monitoring is enabled
           </p>
         </div>
         <NetworkChartLoading />
@@ -108,7 +105,7 @@ export function NetworkChartClient({ server_id }: { server_id: number }) {
 
   const initChartConfig = {
     avg_delay: {
-      label: t("avg_delay"),
+      label: "Latency",
     },
   } satisfies ChartConfig;
 
@@ -138,9 +135,7 @@ export function NetworkChart({
   serverName: string;
   formattedData: ResultItem[];
 }) {
-  const t = useTranslations("NetworkChart");
   const router = useRouter();
-  const locale = useLocale();
 
   const defaultChart = "All";
 
@@ -165,7 +160,7 @@ export function NetworkChart({
         <div className="flex flex-none flex-col justify-center gap-1 border-b px-6 py-4">
           <CardTitle
             onClick={() => {
-              router.push(`/${locale}/`);
+              router.push(`/`);
             }}
             className="flex flex-none cursor-pointer items-center gap-0.5 text-xl"
           >
@@ -173,7 +168,7 @@ export function NetworkChart({
             {serverName}
           </CardTitle>
           <CardDescription className="text-xs">
-            {chartDataKey.length} {t("ServerMonitorCount")}
+            {chartDataKey.length} Services
           </CardDescription>
         </div>
         <div className="flex flex-wrap">

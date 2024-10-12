@@ -1,12 +1,10 @@
 import withPWAInit from "@ducanh2912/next-pwa";
+
 import withBundleAnalyzer from "@next/bundle-analyzer";
-import createNextIntlPlugin from "next-intl/plugin";
 
 const bundleAnalyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
-
-const withNextIntl = createNextIntlPlugin();
 
 const withPWA = withPWAInit({
   dest: "public",
@@ -23,10 +21,6 @@ const withPWA = withPWAInit({
 const nextConfig = {
   output: "standalone",
   reactStrictMode: true,
-  logging: {
-    fetches: {
-      fullUrl: true,
-    },
-  },
 };
-export default bundleAnalyzer(withPWA(withNextIntl(nextConfig)));
+
+export default bundleAnalyzer(withPWA(nextConfig));

@@ -1,5 +1,5 @@
-import Footer from "@/app/[locale]/(main)/footer";
-import Header from "@/app/[locale]/(main)/header";
+import Footer from "@/app/(main)/footer";
+import Header from "@/app/(main)/header";
 import React from "react";
 
 type DashboardProps = {

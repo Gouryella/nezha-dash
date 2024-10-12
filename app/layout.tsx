@@ -1,16 +1,13 @@
-// @auto-i18n-check. Please do not delete the line.
-import { locales } from "@/i18n-metadata";
+import "@/styles/globals.css";
+
 import { cn } from "@/lib/utils";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Viewport } from "next";
-import { NextIntlClientProvider, useMessages } from "next-intl";
-import { unstable_setRequestLocale } from "next-intl/server";
 import { PublicEnvScript } from "next-runtime-env";
 import { ThemeProvider } from "next-themes";
 import { Inter as FontSans } from "next/font/google";
 import React from "react";
-
 import "/node_modules/flag-icons/css/flag-icons.min.css";
 
 const fontSans = FontSans({
@@ -36,27 +33,17 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
-// optimization: force static for vercel
 export const dynamic = process.env.VERCEL ? "force-static" : "auto";
 
 export const runtime = "edge";
 
-export async function generateStaticParams() {
-  return locales.map((locale) => ({ locale }));
+interface RootLayoutProps {
+  children: React.ReactNode;
 }
 
-export default function LocaleLayout({
-  children,
-  params: { locale },
-}: {
-  children: React.ReactNode;
-  params: { locale: string };
-}) {
-  unstable_setRequestLocale(locale);
-
-  const messages = useMessages();
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head>
         <PublicEnvScript />
       </head>
@@ -72,9 +59,7 @@ export default function LocaleLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            {children}
-          </NextIntlClientProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>

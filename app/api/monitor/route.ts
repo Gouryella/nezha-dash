@@ -1,4 +1,4 @@
-import { ServerMonitorChart } from "@/app/[locale]/types/nezha-api";
+import { ServerMonitorChart } from "@/app/types/nezha-api";
 import { GetServerMonitor } from "@/lib/serverFetch";
 import { NextResponse } from "next/server";
 

@@ -1,4 +1,4 @@
-import { ServerApi } from "@/app/[locale]/types/nezha-api";
+import { ServerApi } from "@/app/types/nezha-api";
 import { GetNezhaData } from "@/lib/serverFetch";
 import { NextResponse } from "next/server";
 

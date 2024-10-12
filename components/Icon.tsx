@@ -1,5 +1,4 @@
 import Image from "next/image";
-
 export function GitHubIcon(props: React.ComponentPropsWithoutRef<"svg">) {
   return (
     <svg viewBox="0 0 496 512" fill="white" {...props}>
@@ -7,7 +6,6 @@ export function GitHubIcon(props: React.ComponentPropsWithoutRef<"svg">) {
     </svg>
   );
 }
-
 export function BackIcon() {
   return (
     <>
