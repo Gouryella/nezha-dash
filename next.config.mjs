@@ -27,4 +27,4 @@ const nextConfig = {
     },
   },
 };
-export default bundleAnalyzer(withPWA((nextConfig));
+export default bundleAnalyzer(withPWA((nextConfig)));
