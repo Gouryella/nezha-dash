@@ -1,6 +1,5 @@
 import { NezhaAPISafe } from "@/app/types/nezha-api";
 import { cn, formatBytes } from "@/lib/utils";
-import { useTranslations } from "next-intl";
 
 export function ServerCardPopoverCard({
   className,
@@ -32,40 +31,39 @@ export default function ServerCardPopover({
   host: NezhaAPISafe["host"];
   status: NezhaAPISafe["status"];
 }) {
-  const t = useTranslations("ServerCardPopover");
   return (
     <section className="max-w-[300px]">
       <ServerCardPopoverCard
-        title={t("System")}
+        title="System"
         content={`${host.Platform}-${host.PlatformVersion} [${host.Virtualization}: ${host.Arch}]`}
       />
       <ServerCardPopoverCard
-        title={t("CPU")}
+        title="CPU"
         content={`${host.CPU.map((item) => item).join(", ")}`}
       />
       <ServerCardPopoverCard
-        title={t("Mem")}
+        title="Mem"
         content={`${formatBytes(status.MemUsed)} / ${formatBytes(host.MemTotal)}`}
       />
       <ServerCardPopoverCard
-        title={t("STG")}
+        title="STG"
         content={`${formatBytes(status.DiskUsed)} / ${formatBytes(host.DiskTotal)}`}
       />
       <ServerCardPopoverCard
-        title={t("Swap")}
+        title="Swap"
         content={`${formatBytes(status.SwapUsed)} / ${formatBytes(host.SwapTotal)}`}
       />
       <ServerCardPopoverCard
-        title={t("Network")}
+        title="Network"
         content={`${formatBytes(status.NetOutTransfer)} / ${formatBytes(status.NetInTransfer)}`}
       />
       <ServerCardPopoverCard
-        title={t("Load")}
+        title="Load"
         content={`${status.Load1.toFixed(2)} / ${status.Load5.toFixed(2)} / ${status.Load15.toFixed(2)}`}
       />
       <ServerCardPopoverCard
         className="mb-0"
-        title={t("Online")}
+        title="Online"
         content={`${(status.Uptime / 86400).toFixed(0)} Days`}
       />
     </section>
