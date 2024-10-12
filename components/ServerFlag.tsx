@@ -33,10 +33,6 @@ export default function ServerFlag({ country_code }: { country_code: string }) {
 
   if (!country_code) return null;
 
-  if (supportsEmojiFlags && country_code.toLowerCase() === "tw") {
-    country_code = "cn";
-  }
-
   return (
     <span className="text-[12px] text-muted-foreground">
       {useSvgFlag || !supportsEmojiFlags ? (
