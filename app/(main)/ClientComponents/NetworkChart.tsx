@@ -236,7 +236,8 @@ export function NetworkChart({
               axisLine={false}
               mirror={true}
               tickMargin={-15}
-              minTickGap={20}
+              minTickGap={32}
+              interval={"preserveStartEnd"}
               tickFormatter={(value) => `${value}ms`}
             />
             <ChartTooltip
