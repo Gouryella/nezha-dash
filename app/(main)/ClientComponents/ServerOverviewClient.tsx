@@ -61,7 +61,7 @@ export default function ServerOverviewClient() {
         <CardContent className="px-6 py-3">
           <section className="flex flex-col gap-1">
             <p className="text-sm font-medium md:text-base">
-              Online servers
+              Offline servers
             </p>
             <div className="flex items-center gap-2">
               <span className="relative flex h-2 w-2">
