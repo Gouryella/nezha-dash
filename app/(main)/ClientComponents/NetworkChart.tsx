@@ -28,6 +28,7 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import useSWR from "swr";
+import { useMemo, useCallback } from 'react';
 
 interface ResultItem {
   created_at: number;
@@ -40,7 +41,7 @@ export function NetworkChartClient({ server_id }: { server_id: number }) {
     nezhaFetcher,
     {
       refreshInterval:
-        Number(getEnv("NEXT_PUBLIC_NezhaFetchInterval")) || 15000,
+        Number(getEnv("NEXT_PUBLIC_NezhaFetchInterval")) || 2000,
     },
   );
 
@@ -50,7 +51,7 @@ export function NetworkChartClient({ server_id }: { server_id: number }) {
         <div className="flex flex-col items-center justify-center">
           <p className="text-sm font-medium opacity-40">{error.message}</p>
           <p className="text-sm font-medium opacity-40">
-            Failed to fetch network data, please check if the server monitoring is enabled
+          Failed to fetch network data, please check if the server monitoring is enabled
           </p>
         </div>
         <NetworkChartLoading />
@@ -84,7 +85,7 @@ export function NetworkChartClient({ server_id }: { server_id: number }) {
   );
 }
 
-export function NetworkChart({
+export const NetworkChart = React.memo(function NetworkChart({
   chartDataKey,
   chartConfig,
   chartData,
@@ -103,18 +104,59 @@ export function NetworkChart({
 
   const [activeChart, setActiveChart] = React.useState(defaultChart);
 
-  const handleButtonClick = (chart: string) => {
-    if (chart === activeChart) {
-      setActiveChart(defaultChart);
-    } else {
-      setActiveChart(chart);
-    }
-  };
+  const handleButtonClick = useCallback((chart: string) => {
+    setActiveChart(prev => prev === chart ? defaultChart : chart);
+  }, [defaultChart]);
 
-  const getColorByIndex = (chart: string) => {
+  const getColorByIndex = useCallback((chart: string) => {
     const index = chartDataKey.indexOf(chart);
     return `hsl(var(--chart-${(index % 10) + 1}))`;
-  };
+  }, [chartDataKey]);
+
+  const chartButtons = useMemo(() => (
+    chartDataKey.map((key) => (
+      <button
+        key={key}
+        data-active={activeChart === key}
+        className={`relative z-30 flex flex-1 flex-col justify-center gap-1 border-b px-6 py-4 text-left data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-6`}
+        onClick={() => handleButtonClick(key)}
+      >
+        <span className="whitespace-nowrap text-xs text-muted-foreground">
+          {key}
+        </span>
+        <span className="text-md font-bold leading-none sm:text-lg">
+          {chartData[key][chartData[key].length - 1].avg_delay.toFixed(2)}ms
+        </span>
+      </button>
+    ))
+  ), [chartDataKey, activeChart, chartData, handleButtonClick]);
+
+  const chartLines = useMemo(() => {
+    if (activeChart !== defaultChart) {
+      return (
+        <Line
+          isAnimationActive={false}
+          strokeWidth={1}
+          type="linear"
+          dot={false}
+          dataKey="avg_delay"
+          stroke={getColorByIndex(activeChart)}
+        />
+      );
+    }
+    return chartDataKey.map((key) => (
+      <Line
+        key={key}
+        isAnimationActive={false}
+        strokeWidth={1}
+        type="linear"
+        dot={false}
+        dataKey={key}
+        stroke={getColorByIndex(key)}
+        connectNulls={true}
+      />
+    ));
+  }, [activeChart, defaultChart, chartDataKey, getColorByIndex]);
 
   return (
     <Card>
@@ -134,26 +176,7 @@ export function NetworkChart({
           </CardDescription>
         </div>
         <div className="flex flex-wrap">
-          {chartDataKey.map((key) => {
-            return (
-              <button
-                key={key}
-                data-active={activeChart === key}
-                className={`relative z-30 flex flex-1 flex-col justify-center gap-1 border-b px-6 py-4 text-left data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-6`}
-                onClick={() => handleButtonClick(key)}
-              >
-                <span className="whitespace-nowrap text-xs text-muted-foreground">
-                  {key}
-                </span>
-                <span className="text-md font-bold leading-none sm:text-lg">
-                  {chartData[key][chartData[key].length - 1].avg_delay.toFixed(
-                    2,
-                  )}
-                  ms
-                </span>
-              </button>
-            );
-          })}
+          {chartButtons}
         </div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
@@ -163,15 +186,8 @@ export function NetworkChart({
         >
           <LineChart
             accessibilityLayer
-            data={
-              activeChart === defaultChart
-                ? formattedData
-                : chartData[activeChart]
-            }
-            margin={{
-              left: 12,
-              right: 12,
-            }}
+            data={activeChart === defaultChart ? formattedData : chartData[activeChart]}
+            margin={{ left: 12, right: 12 }}
           >
             <CartesianGrid vertical={false} />
             <XAxis
@@ -179,6 +195,8 @@ export function NetworkChart({
               tickLine={false}
               axisLine={false}
               tickMargin={8}
+              minTickGap={32}
+              interval={"preserveStartEnd"}
               tickFormatter={(value) => formatRelativeTime(value)}
             />
             <YAxis
@@ -186,17 +204,15 @@ export function NetworkChart({
               axisLine={false}
               mirror={true}
               tickMargin={-15}
-              minTickGap={32}
-              interval={"preserveStartEnd"}
+              minTickGap={20}
               tickFormatter={(value) => `${value}ms`}
             />
             <ChartTooltip
+              isAnimationActive={false}
               content={
                 <ChartTooltipContent
-                  indicator={"dot"}
-                  className="gap-2"
+                  indicator={"line"}
                   labelKey="created_at"
-                  labelClassName="text-muted-foreground"
                   labelFormatter={(_, payload) => {
                     return formatTime(payload[0].payload.created_at);
                   }}
@@ -206,35 +222,14 @@ export function NetworkChart({
             {activeChart === defaultChart && (
               <ChartLegend content={<ChartLegendContent />} />
             )}
-            {activeChart !== defaultChart && (
-              <Line
-                isAnimationActive={false}
-                strokeWidth={1}
-                type="linear"
-                dot={false}
-                dataKey="avg_delay"
-                stroke={getColorByIndex(activeChart)}
-              />
-            )}
-            {activeChart === defaultChart &&
-              chartDataKey.map((key) => (
-                <Line
-                  key={key}
-                  isAnimationActive={false}
-                  strokeWidth={1}
-                  type="linear"
-                  dot={false}
-                  dataKey={key}
-                  stroke={getColorByIndex(key)}
-                  connectNulls={true}
-                />
-              ))}
+            {chartLines}
           </LineChart>
         </ChartContainer>
       </CardContent>
     </Card>
   );
-}
+});
+
 
 const transformData = (data: NezhaAPIMonitor[]) => {
   const monitorData: ServerMonitorChart = {};
