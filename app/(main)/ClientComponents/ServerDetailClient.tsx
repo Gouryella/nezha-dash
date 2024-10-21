@@ -1,6 +1,6 @@
 "use client";
 
-import { ServerDetailLoading } from "@/app(main)/ClientComponents/ServerDetailLoading";
+import { ServerDetailLoading } from "@/app/(main)/ClientComponents/ServerDetailLoading";
 import { NezhaAPISafe } from "@/app/types/nezha-api";
 import { BackIcon } from "@/components/Icon";
 import { Badge } from "@/components/ui/badge";
