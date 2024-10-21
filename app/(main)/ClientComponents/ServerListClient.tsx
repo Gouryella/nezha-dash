@@ -10,7 +10,7 @@ import useSWR from "swr";
 
 export default function ServerListClient() {
 
-  const [tag, setTag] = useState<string>("defaultTag");
+  const [tag, setTag] = useState<string>("All");
 
   const { data, error } = useSWR<ServerApi>("/api/server", nezhaFetcher, {
     refreshInterval: Number(getEnv("NEXT_PUBLIC_NezhaFetchInterval")) || 2000,
