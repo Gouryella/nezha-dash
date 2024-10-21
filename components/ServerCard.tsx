@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/popover";
 import getEnv from "@/lib/env-entry";
 import { cn, formatBytes, formatNezhaInfo } from "@/lib/utils";
-import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 
 export default function ServerCard({

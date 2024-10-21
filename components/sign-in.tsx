@@ -1,7 +1,6 @@
 import Footer from "@/app/(main)/footer";
 import Header from "@/app/(main)/header";
 import { signIn } from "@/auth";
-import { useLocale } from "next-intl";
 import { redirect } from "next/navigation";
 
 export function SignIn() {
