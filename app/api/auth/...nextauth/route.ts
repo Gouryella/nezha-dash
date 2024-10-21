@@ -1,6 +1,9 @@
 import { handlers } from "@/auth";
 import { NextRequest } from "next/server";
 
+export const runtime = "edge";
+
+
 const reqWithTrustedOrigin = (req: NextRequest): NextRequest => {
   const proto = req.headers.get("x-forwarded-proto");
   const host = req.headers.get("x-forwarded-host");
