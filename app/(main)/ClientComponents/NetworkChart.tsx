@@ -58,7 +58,7 @@ export function NetworkChartClient({
         <div className="flex flex-col items-center justify-center">
           <p className="text-sm font-medium opacity-40">{error.message}</p>
           <p className="text-sm font-medium opacity-40">
-            chart_fetch_error_message
+          Please check your environment variables and review the server console
           </p>
         </div>
         <NetworkChartLoading />
