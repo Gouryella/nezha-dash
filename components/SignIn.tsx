@@ -48,7 +48,7 @@ export function SignIn() {
           />
         </label>
         <button className=" px-1.5 py-0.5 w-fit text-sm font-semibold rounded-[8px] border bg-card hover:brightness-95 transition-all text-card-foreground shadow-lg shadow-neutral-200/40 dark:shadow-none">
-          "Submit
+          Submit
         </button>
       </section>
     </form>
