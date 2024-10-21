@@ -86,12 +86,16 @@ function Overview() {
       <p className="text-md font-semibold">👋 Overview</p>
       <div className="flex items-center gap-1.5">
         <p className="text-sm font-medium opacity-50 ml-7">Local Time</p>
-        {mouted && (
+        {mouted ? (
           <p className="opacity-1 text-sm font-medium">{timeString}</p>
+        ): (
+          <Skeleton className="h-[20px] w-[50px] rounded-[5px] bg-muted-foreground/10 animate-none"></Skeleton>
         )}
         <p className="text-sm font-medium opacity-50 ml-4">UTC Time</p>
-        {mouted && (
+        {mouted ? (
           <p className="opacity-1 text-sm font-medium">{utcTimeString}</p>
+        ) : (
+          <Skeleton className="h-[20px] w-[50px] rounded-[5px] bg-muted-foreground/10 animate-none"></Skeleton>
         )}
       </div>
     </section>
