@@ -10,10 +10,15 @@ export function formatNezhaInfo(serverInfo: NezhaAPISafe) {
   return {
     ...serverInfo,
     cpu: serverInfo.status.CPU,
+    process: serverInfo.status.ProcessCount,
     up: serverInfo.status.NetOutSpeed / 1024 / 1024,
     down: serverInfo.status.NetInSpeed / 1024 / 1024,
     online: serverInfo.online_status,
+    tcp: serverInfo.status.TcpConnCount,
+    udp: serverInfo.status.UdpConnCount,
     mem: (serverInfo.status.MemUsed / serverInfo.host.MemTotal) * 100,
+    swap: (serverInfo.status.SwapUsed / serverInfo.host.SwapTotal) * 100,
+    disk: (serverInfo.status.DiskUsed / serverInfo.host.DiskTotal) * 100,
     stg: (serverInfo.status.DiskUsed / serverInfo.host.DiskTotal) * 100,
     country_code: serverInfo.host.CountryCode,
   };
@@ -85,17 +90,19 @@ export function formatRelativeTime(timestamp: number): string {
   const diff = now - timestamp;
   const hours = Math.floor(diff / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
   if (hours > 24) {
     const days = Math.floor(hours / 24);
     return `${days}d`;
   } else if (hours > 0) {
     return `${hours}h`;
-  } else if (minutes >= 0) {
+  } else if (minutes > 0) {
     return `${minutes}m`;
-  } else {
-    return "just now";
+  } else if (seconds >= 0) {
+    return `${seconds}s`;
   }
+  return "0s";
 }
 
 export function formatTime(timestamp: number): string {
@@ -103,7 +110,7 @@ export function formatTime(timestamp: number): string {
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
-  const hours = date.getHours();
+  const hours = date.getHours().toString().padStart(2, "0");
   const minutes = date.getMinutes().toString().padStart(2, "0");
   const seconds = date.getSeconds().toString().padStart(2, "0");
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;

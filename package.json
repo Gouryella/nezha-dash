@@ -44,7 +44,8 @@
     "sharp": "^0.33.5",
     "swr": "^2.2.6-beta.4",
     "tailwind-merge": "^2.5.3",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "next-auth": "^5.0.0-beta.25",
   },
   "devDependencies": {
     "eslint-plugin-turbo": "^2.1.3",

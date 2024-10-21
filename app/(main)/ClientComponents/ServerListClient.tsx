@@ -9,9 +9,8 @@ import { useState } from "react";
 import useSWR from "swr";
 
 export default function ServerListClient() {
-  // const t = useTranslations("ServerListClient");
 
-  const [tag, setTag] = useState<string>("All");
+  const [tag, setTag] = useState<string>("defaultTag");
 
   const { data, error } = useSWR<ServerApi>("/api/server", nezhaFetcher, {
     refreshInterval: Number(getEnv("NEXT_PUBLIC_NezhaFetchInterval")) || 2000,
@@ -20,12 +19,10 @@ export default function ServerListClient() {
     return (
       <div className="flex flex-col items-center justify-center">
         <p className="text-sm font-medium opacity-40">{error.message}</p>
-        <p className="text-sm font-medium opacity-40">
-          Please check your environment variables and review the server console
-        </p>
+        <p className="text-sm font-medium opacity-40">Please check your environment variables and review the server console</p>
       </div>
     );
-  if (!data) return null;
+  if (!data?.result) return null;
 
   const { result } = data;
 

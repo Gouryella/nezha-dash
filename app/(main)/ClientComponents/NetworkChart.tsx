@@ -26,22 +26,29 @@ import { formatTime, nezhaFetcher } from "@/lib/utils";
 import { formatRelativeTime } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import * as React from "react";
+import { useCallback, useMemo } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import useSWR from "swr";
-import { useMemo, useCallback } from 'react';
 
 interface ResultItem {
   created_at: number;
   [key: string]: number | null;
 }
 
-export function NetworkChartClient({ server_id }: { server_id: number }) {
+export function NetworkChartClient({
+  server_id,
+  show,
+}: {
+  server_id: number;
+  show: boolean;
+}) {
   const { data, error } = useSWR<NezhaAPIMonitor[]>(
     `/api/monitor?server_id=${server_id}`,
     nezhaFetcher,
     {
       refreshInterval:
         Number(getEnv("NEXT_PUBLIC_NezhaFetchInterval")) || 2000,
+      isPaused: () => !show,
     },
   );
 
@@ -51,7 +58,7 @@ export function NetworkChartClient({ server_id }: { server_id: number }) {
         <div className="flex flex-col items-center justify-center">
           <p className="text-sm font-medium opacity-40">{error.message}</p>
           <p className="text-sm font-medium opacity-40">
-          Failed to fetch network data, please check if the server monitoring is enabled
+            chart_fetch_error_message
           </p>
         </div>
         <NetworkChartLoading />
@@ -61,14 +68,13 @@ export function NetworkChartClient({ server_id }: { server_id: number }) {
 
   if (!data) return <NetworkChartLoading />;
 
-
   const transformedData = transformData(data);
 
   const formattedData = formatData(data);
 
   const initChartConfig = {
     avg_delay: {
-      label: "Latency",
+      label: "avg_delay",
     },
   } satisfies ChartConfig;
 
@@ -104,32 +110,40 @@ export const NetworkChart = React.memo(function NetworkChart({
 
   const [activeChart, setActiveChart] = React.useState(defaultChart);
 
-  const handleButtonClick = useCallback((chart: string) => {
-    setActiveChart(prev => prev === chart ? defaultChart : chart);
-  }, [defaultChart]);
+  const handleButtonClick = useCallback(
+    (chart: string) => {
+      setActiveChart((prev) => (prev === chart ? defaultChart : chart));
+    },
+    [defaultChart],
+  );
 
-  const getColorByIndex = useCallback((chart: string) => {
-    const index = chartDataKey.indexOf(chart);
-    return `hsl(var(--chart-${(index % 10) + 1}))`;
-  }, [chartDataKey]);
+  const getColorByIndex = useCallback(
+    (chart: string) => {
+      const index = chartDataKey.indexOf(chart);
+      return `hsl(var(--chart-${(index % 10) + 1}))`;
+    },
+    [chartDataKey],
+  );
 
-  const chartButtons = useMemo(() => (
-    chartDataKey.map((key) => (
-      <button
-        key={key}
-        data-active={activeChart === key}
-        className={`relative z-30 flex flex-1 flex-col justify-center gap-1 border-b px-6 py-4 text-left data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-6`}
-        onClick={() => handleButtonClick(key)}
-      >
-        <span className="whitespace-nowrap text-xs text-muted-foreground">
-          {key}
-        </span>
-        <span className="text-md font-bold leading-none sm:text-lg">
-          {chartData[key][chartData[key].length - 1].avg_delay.toFixed(2)}ms
-        </span>
-      </button>
-    ))
-  ), [chartDataKey, activeChart, chartData, handleButtonClick]);
+  const chartButtons = useMemo(
+    () =>
+      chartDataKey.map((key) => (
+        <button
+          key={key}
+          data-active={activeChart === key}
+          className={`relative z-30 flex flex-1 flex-col justify-center gap-1 border-b px-6 py-4 text-left data-[active=true]:bg-muted/50 sm:border-l sm:border-t-0 sm:px-6`}
+          onClick={() => handleButtonClick(key)}
+        >
+          <span className="whitespace-nowrap text-xs text-muted-foreground">
+            {key}
+          </span>
+          <span className="text-md font-bold leading-none sm:text-lg">
+            {chartData[key][chartData[key].length - 1].avg_delay.toFixed(2)}ms
+          </span>
+        </button>
+      )),
+    [chartDataKey, activeChart, chartData, handleButtonClick],
+  );
 
   const chartLines = useMemo(() => {
     if (activeChart !== defaultChart) {
@@ -172,12 +186,10 @@ export const NetworkChart = React.memo(function NetworkChart({
             {serverName}
           </CardTitle>
           <CardDescription className="text-xs">
-            {chartDataKey.length} Services
+            {chartDataKey.length} ServerMonitorCount
           </CardDescription>
         </div>
-        <div className="flex flex-wrap">
-          {chartButtons}
-        </div>
+        <div className="flex flex-wrap">{chartButtons}</div>
       </CardHeader>
       <CardContent className="px-2 sm:p-6">
         <ChartContainer
@@ -186,7 +198,11 @@ export const NetworkChart = React.memo(function NetworkChart({
         >
           <LineChart
             accessibilityLayer
-            data={activeChart === defaultChart ? formattedData : chartData[activeChart]}
+            data={
+              activeChart === defaultChart
+                ? formattedData
+                : chartData[activeChart]
+            }
             margin={{ left: 12, right: 12 }}
           >
             <CartesianGrid vertical={false} />
@@ -230,7 +246,6 @@ export const NetworkChart = React.memo(function NetworkChart({
   );
 });
 
-
 const transformData = (data: NezhaAPIMonitor[]) => {
   const monitorData: ServerMonitorChart = {};
 
@@ -250,7 +265,7 @@ const transformData = (data: NezhaAPIMonitor[]) => {
   });
 
   return monitorData;
-}
+};
 
 const formatData = (rawData: NezhaAPIMonitor[]) => {
   const result: { [time: number]: ResultItem } = {};
